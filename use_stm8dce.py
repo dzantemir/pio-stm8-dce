@@ -14,13 +14,18 @@ def optimize_asm(source, target, env):
     if not os.path.isdir(temp_out_dir):
         os.mkdir(temp_out_dir)
 
+    flag_tst=(stm8dce_flags.find(" -v")<0 and 
+    stm8dce_flags.find("-v ")<0 and 
+    stm8dce_flags.find(" -v ")<0 and 
+    (stm8dce_flags.find("-v")<0 and len(stm8dce_flags)<=len("-v")))
+
     env.Execute("stm8dce "  + 
-    env.GetProjectOption("stm8dce_flags", default="")   +
-    (" -v " if int(ARGUMENTS.get("PIOVERBOSE", 0)) else "") +
+    stm8dce_flags  +
+    (" -v " if int(ARGUMENTS.get("PIOVERBOSE", 0)) and  flag_tst  else "") +
     " -o " + 
-    '"' + temp_out_dir +  
-    '" "'+
-    '" "'.join( [os.path.splitext(str(x))[0]+".asm"   for x in source])+ '"' )    
+    '"' + temp_out_dir + 
+    '" "' +
+    '" "'.join( [os.path.splitext(str(x))[0]+".asm"   for x in source])+ '"' )     
   
     for x in source:
         tmp_path= os.path.join(temp_out_dir,os.path.splitext(os.path.basename(str(x)))[0]+".asm") 
