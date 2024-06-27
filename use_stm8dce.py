@@ -9,6 +9,7 @@ missing=True
 for pkg in pkg_resources.working_set:
     if pkg.key=="stm8dce" and pkg.version>="1.1.1":
         missing=False
+        break
         
 if missing:
     try:
@@ -46,10 +47,7 @@ def optimize_asm(source, target, env):
     for x in source:
         tmp_path= os.path.join(temp_out_dir,os.path.splitext(os.path.basename(str(x)))[0]+".asm") 
         if  os.path.isfile(tmp_path):
-            env.Execute(env.VerboseAction("$AS -plosg -ff -o " + '"' +str(x) +'" "' +tmp_path+'"',"COMPILING "+str(x) ))
-            os.remove(tmp_path)
-            
-    if not os.listdir(temp_out_dir):
-        os.rmdir(temp_out_dir)
+            env.Execute(env.VerboseAction("$AS -plosg -ff -o " + '"' +str(x) +'" "' +tmp_path+'"',"RECOMPILING "+str(x) ))
+    
 
 env.AddPreAction("$BUILD_DIR/${PROGNAME}.elf", env.VerboseAction(optimize_asm,"EXTRA SCRIPT"))
